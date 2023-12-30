@@ -95,7 +95,7 @@ function Battleship() {
     } else {
       if (space.name === "player") {
         tempMessage = "THE ENEMY";
-        if (space.isShip && !space.isShip.isSunk) {
+        if (space.isShip && space.isShip.hits + 1 !== space.isShip.length) {
           tempMessage =
             tempMessage +
             " HIT YOUR " +
@@ -119,7 +119,7 @@ function Battleship() {
         }
       }
       if (space.name === "enemy") {
-        if (space.isShip && !space.isShip.isSunk) {
+        if (space.isShip && space.isShip.hits + 1 !== space.isShip.length) {
           tempMessage =
             "YOU HIT AN ENEMY SHIP AT " + alphaArr[space.y] + space.x;
         }
@@ -146,11 +146,11 @@ function Battleship() {
 
   useEffect(() => {
     // if(message) handleMessage()
-    if (currentPlayer === "player") {
-      let result = gamePeriod === "in progress" ? checkGameStatus() : false;
-      if (result) console.log({ result });
-    }
-    if (currentPlayer === "enemy") {
+
+    let result = gamePeriod === "in progress" ? checkGameStatus() : false;
+    if (result) console.log({ result });
+
+    if (currentPlayer === "enemy" && !result) {
       handlePing();
       setIsPing(true);
       setTimeout(() => {
@@ -165,7 +165,15 @@ function Battleship() {
       Array.from(Array(3)).map((item, j) => {
         let y = space.y + i - 1;
         let x = space.x + j - 1;
-        if (y > 9 || y < 0 || x > 9 || x < 0 || i === j) return;
+        if (
+          y > 9 ||
+          y < 0 ||
+          x > 9 ||
+          x < 0 ||
+          i === j ||
+          Math.abs(i - j) === 2
+        )
+          return;
         tempMoves = [...tempMoves, board[y][x]];
       });
     });
@@ -220,7 +228,7 @@ function Battleship() {
       let tempTest = tempQueue.filter((el) => {
         return el[ax.axis] === ax.num;
       });
-      return tempTest > 0;
+      return tempTest.length > 0;
     });
 
     console.log({ testAxis, axis });
@@ -545,16 +553,16 @@ function Battleship() {
         />
       )}
       {gamePeriod === "result" && (
-        <div>
-          <div className=" h-fit p-10 bg-opacity-70 mt-20 h-screen flex flex-col items-center animate-fade-up animate-once animate-duration-[5000ms] ">
+        <div className="absolute">
+          <div className=" h-content bg-slate-200 p-10 bg-opacity-70 -mt-15 w-screen h-screen flex flex-col  items-center animate-fade-up animate-once animate-duration-[5000ms] ">
             <Wave
               text={
                 Object.values(playerFleet).filter((el) => !el.isSunk).length > 0
                   ? "YOU WIN"
                   : "YOU LOSE"
               }
-              color="#0059b3"
-              textsize={"60"}
+              color="red"
+              textsize={"70"}
               widthmodifier={45}
             />
           </div>
