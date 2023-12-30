@@ -567,7 +567,7 @@ function Battleship() {
         className="bg-center md:bg-[center_top_-200px] bg-cover flex md:justify-center gap-10 min-h-screen bg-blue-100 flex-col md:flex-row p-4 z-50"
       >
         {gamePeriod === "pregame" && (
-          <div className="bg-slate-200 h-fit p-10 bg-opacity-70 mt-20 h-screen flex flex-col items-center animate-fade-up animate-once animate-duration-[5000ms] ">
+          <div className=" bg-slate-50 h-content p-10 bg-opacity-20 mt-20 h-screen flex flex-col items-center animate-fade-up animate-once animate-duration-[5000ms] ">
             <div className="">
               <Wave
                 text="MIDWAY"
