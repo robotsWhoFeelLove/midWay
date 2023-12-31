@@ -34,6 +34,7 @@ function Battleship() {
   const [mode, setMode] = useState("full");
   const [message, setMessage] = useState(false);
   const [tutorialPhase, setTutorialPhase] = useState(0);
+  const [winner, setWinner] = useState();
 
   function resetGame() {
     setPlayerBoard(player);
@@ -67,11 +68,13 @@ function Battleship() {
   function checkGameStatus() {
     console.log(Object.values(playerFleet).filter((ship) => ship.isSunk));
     if (Object.values(playerFleet).filter((ship) => ship.isSunk).length === 5) {
+      setWinner("YOU LOSE");
       setGamePeriod("result");
       return "enemy wins";
     }
 
     if (Object.values(enemyFleet).filter((ship) => ship.isSunk).length === 5) {
+      setWinner("YOU WIN");
       setGamePeriod("result");
       return "player wins";
     }
@@ -102,6 +105,7 @@ function Battleship() {
             space.isShip.name.toUpperCase() +
             " AT " +
             alphaArr[space.y] +
+            "-" +
             space.x;
         }
         if (space.isShip && space.isShip.hits + 1 === space.isShip.length) {
@@ -111,17 +115,18 @@ function Battleship() {
             space.isShip.name.toUpperCase() +
             " AT " +
             alphaArr[space.y] +
+            "-" +
             space.x;
         }
         if (!space.isShip) {
           tempMessage =
-            tempMessage + " MISSED AT " + alphaArr[space.y] + space.x;
+            tempMessage + " MISSED AT " + alphaArr[space.y] + "-" + space.x;
         }
       }
       if (space.name === "enemy") {
         if (space.isShip && space.isShip.hits + 1 !== space.isShip.length) {
           tempMessage =
-            "YOU HIT AN ENEMY SHIP AT " + alphaArr[space.y] + space.x;
+            "YOU HIT AN ENEMY SHIP AT " + alphaArr[space.y] + "-" + space.x;
         }
         if (space.isShip && space.isShip.hits + 1 === space.isShip.length) {
           tempMessage =
@@ -129,10 +134,11 @@ function Battleship() {
             space.isShip.name.toUpperCase() +
             " AT " +
             alphaArr[space.y] +
+            "-" +
             space.x;
         }
         if (!space.isShip) {
-          tempMessage = "YOU MISSED AT " + alphaArr[space.y] + space.x;
+          tempMessage = "YOU MISSED AT " + alphaArr[space.y] + "-" + space.x;
         }
       }
     }
@@ -552,15 +558,11 @@ function Battleship() {
           round={round}
         />
       )}
-      {gamePeriod === "result" && (
+      {gamePeriod === "result" && setWinner && (
         <div className="absolute">
           <div className=" h-content bg-slate-200 p-10 bg-opacity-70 -mt-15 w-screen h-screen flex flex-col  items-center animate-fade-up animate-once animate-duration-[5000ms] ">
             <Wave
-              text={
-                Object.values(playerFleet).filter((el) => !el.isSunk).length > 0
-                  ? "YOU WIN"
-                  : "YOU LOSE"
-              }
+              text={winner}
               color="red"
               textsize={"70"}
               widthmodifier={45}
@@ -575,7 +577,7 @@ function Battleship() {
         className="bg-center md:bg-[center_top_-200px] bg-cover flex md:justify-center gap-10 min-h-screen bg-blue-100 flex-col md:flex-row p-4 z-50"
       >
         {gamePeriod === "pregame" && (
-          <div className=" bg-slate-50 h-content p-10 bg-opacity-20 mt-20 h-screen flex flex-col items-center animate-fade-up animate-once animate-duration-[5000ms] ">
+          <div className=" bg-slate-50 h-content md:p-10 bg-opacity-20 mt-20 h-screen flex flex-col items-center animate-fade-up animate-once animate-duration-[5000ms] ">
             <div className="">
               <Wave
                 text="MIDWAY"
@@ -587,7 +589,7 @@ function Battleship() {
             <div className="flex justify-between w-full mt-20">
               <button
                 onClick={() => setGamePeriod("setup")}
-                className="w-40 bg-blue-400 text-white text-3xl border p-2 rounded-lg border-2 font-quantico"
+                className="w-40 bg-blue-400 text-white text-xl  md:text-3xl border p-2 rounded-lg border-2 font-quantico"
               >
                 BEGIN
               </button>
@@ -596,7 +598,7 @@ function Battleship() {
                   setGamePeriod("setup");
                   setTutorialPhase((prev) => prev + 1);
                 }}
-                className="w-40 bg-blue-400 text-white text-3xl border p-2 rounded-lg border-2 font-quantico"
+                className="w-40 bg-blue-400 text-white text-xl  md:text-3xl border p-2 rounded-lg border-2 font-quantico"
               >
                 TUTORIAL
               </button>
